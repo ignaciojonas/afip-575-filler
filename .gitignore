@@ -1,0 +1,28 @@
+# Archivos PDF generados
+formularios_generados/
+*.pdf
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de respaldo
+*.bak
+*.backup
+*~
+
+# Logs y archivos temporales
+*.log
+*.tmp
+*.temp
+
+# Archivos de desarrollo
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de Ruby
+.bundle/
+vendor/
+Gemfile.lock

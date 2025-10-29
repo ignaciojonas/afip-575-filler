@@ -55,14 +55,20 @@ rows.each_with_index do |data, idx|
   
   puts "📋 Fila #{idx + 1}:"
   
+  # Variables para el nombre del archivo
+  mes_valor = nil
+  anio_valor = nil
+  
   data.each do |field_name, raw_value|
     value = raw_value.to_s
     
-    # Normalizar campos especiales
+    # Normalizar campos especiales y capturar valores para el nombre
     if field_name == 'MES'
       value = normalize_mes(value)
+      mes_valor = value
     elsif field_name == 'ANIO'
       value = normalize_anio(value)
+      anio_valor = value
     end
     
     # Limpiar /Yes de checkboxes
@@ -86,10 +92,19 @@ rows.each_with_index do |data, idx|
   end
   
   acro.create_appearances
-  output_file = File.join(OUTPUT_DIR, "formulario_#{idx + 1}.pdf")
+  
+  # Generar nombre de archivo con mes y año
+  if mes_valor && anio_valor
+    filename = "formulario_#{anio_valor}-#{mes_valor}_#{idx + 1}.pdf"
+  else
+    filename = "formulario_#{idx + 1}.pdf"
+  end
+  
+  output_file = File.join(OUTPUT_DIR, filename)
   doc.write(output_file, optimize: true)
-  puts "   → #{output_file}"
+  puts "   → #{filename}"
   puts
 end
 
 puts "🎉 Completado: #{rows.size} formularios generados en #{OUTPUT_DIR}/"
+puts "📁 Los archivos están ordenados por año y mes para fácil organización"

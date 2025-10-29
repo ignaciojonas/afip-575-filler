@@ -77,14 +77,20 @@ rows.each_with_index do |data, idx|
   doc = HexaPDF::Document.open(TEMPLATE)
   acro = doc.acro_form
   
+  # Variables para el nombre del archivo
+  mes_valor = nil
+  anio_valor = nil
+  
   data.each do |field_name, raw_value|
     value = raw_value.to_s
     
-    # Normalizar campos especiales
+    # Normalizar campos especiales y capturar valores para el nombre
     if field_name == 'MES'
       value = normalize_mes(value)
+      mes_valor = value
     elsif field_name == 'ANIO'
       value = normalize_anio(value)
+      anio_valor = value
     end
     
     # Limpiar /Yes de checkboxes
@@ -107,9 +113,16 @@ rows.each_with_index do |data, idx|
   end
   
   acro.create_appearances
-  output_file = File.join(OUTPUT_DIR, "formulario_#{idx + 1}.pdf")
+  # Generar nombre de archivo con mes y año
+  if mes_valor && anio_valor
+    filename = "formulario_#{anio_valor}-#{mes_valor}_#{idx + 1}.pdf"
+  else
+    filename = "formulario_#{idx + 1}.pdf"
+  end
+  
+  output_file = File.join(OUTPUT_DIR, filename)
   doc.write(output_file, optimize: true)
-  puts "✅ Generado: #{output_file}"
+  puts "✅ Generado: #{filename}"
   puts
 end
 
@@ -140,13 +153,23 @@ MES;10;ANIO;2024;IC2;/Yes;IC2impo;294.21
 
 ## 📤 Resultado
 
+Los archivos se generan con nombres que incluyen año y mes para facilitar la organización:
+
 ```
 formularios_generados/
-├── formulario_1.pdf
-├── formulario_2.pdf
-├── formulario_3.pdf
+├── formulario_2020-11_1.pdf
+├── formulario_2020-12_2.pdf
+├── formulario_2021-01_3.pdf
+├── formulario_2024-10_4.pdf
+├── formulario_2025-01_5.pdf
 └── ...
 ```
+
+**Formato del nombre:** `formulario_AAAA-MM_N.pdf`
+- `AAAA-MM`: Año y mes del formulario
+- `N`: Número secuencial
+
+Los archivos se ordenan automáticamente de forma cronológica en el explorador de archivos.
 
 ## ⚠️ Solución de Problemas
 
